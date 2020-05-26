@@ -33,290 +33,389 @@ def init_sim(testname):
     sim = pyrtl.Simulation(tracer=sim_trace, memory_value_map={
         i_mem : i_mem_init
     })
-    return sim
+    return sim, sim_trace
 
-def test_lui():
-    sim = init_sim("test_lui")
+def print_trace_result(sim, sim_trace):
+    print("+++++++++++++start_of_trace+++++++++++++")
+    print("data memory:", sim.inspect_mem(d_mem))
+    print("register file:", sim.inspect_mem(rf))
+    sim_trace.render_trace()
+    print("++++++++++++++end_of_trace++++++++++++++")
+
+def test_lui(enable_trace=False):
+    sim, sim_trace = init_sim("test_lui")
     sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(1798635520, sim.inspect_mem(rf)[9], "[test_lui] $t1 == 1798635520")
 
-def test_ori():
-    sim = init_sim("test_ori")
+def test_ori(enable_trace=False):
+    sim, sim_trace = init_sim("test_ori")
     sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(6573, sim.inspect_mem(rf)[2], "[test_ori] $v0 == 6573")
 
-def test_addi():
-    sim = init_sim("test_addi")
+def test_addi(enable_trace=False):
+    sim, sim_trace = init_sim("test_addi")
     sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(6573, sim.inspect_mem(rf)[2], "[test_addi] $v0 == 6573")
 
-def test_ori_negative():
-    sim = init_sim("test_ori_negative")
+def test_ori_negative(enable_trace=False):
+    sim, sim_trace = init_sim("test_ori_negative")
     sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(55117, sim.inspect_mem(rf)[21], "[test_ori_negative] $s5 == 55117")
 
-def test_addi_negative():
-    sim = init_sim("test_addi_negative")
+def test_addi_negative(enable_trace=False):
+    sim, sim_trace = init_sim("test_addi_negative")
     sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     actual = unpack('<i', pack('<I', sim.inspect_mem(rf)[21]))[0]
     assert_equals(-10419, actual, "[test_addi_negative] $s5 == -10419")
 
-def test_ori_lui():
-    sim = init_sim("test_ori_lui")
+def test_ori_lui(enable_trace=False):
+    sim, sim_trace = init_sim("test_ori_lui")
     sim.step({})
     sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(3546218496, sim.inspect_mem(rf)[17], "[test_ori_lui] $s1 == 3546218496")
 
-def test_lui_ori():
-    sim = init_sim("test_lui_ori")
+def test_lui_ori(enable_trace=False):
+    sim, sim_trace = init_sim("test_lui_ori")
     sim.step({})
     sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(3546228915, sim.inspect_mem(rf)[17], "[test_lui_ori] $s1 == 3546228915")
 
-def test_add_pp():
-    sim = init_sim("test_add_pp")
+def test_add_pp(enable_trace=False):
+    sim, sim_trace = init_sim("test_add_pp")
     for _ in range(3):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(318, sim.inspect_mem(rf)[2], "[test_add_pp] $v0 == 318")
 
-def test_add_same():
-    sim = init_sim("test_add_same")
+def test_add_same(enable_trace=False):
+    sim, sim_trace = init_sim("test_add_same")
     sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(0, sim.inspect_mem(rf)[2], "[test_add_same] $v0 == 0")
 
-def test_add_nn():
-    sim = init_sim("test_add_nn")
+def test_add_nn(enable_trace=False):
+    sim, sim_trace = init_sim("test_add_nn")
     for _ in range(3):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     actual = unpack('<i', pack('<I', sim.inspect_mem(rf)[2]))[0]
     assert_equals(-318, actual, "[test_add_nn] $v0 == -318")
 
-def test_add_np():
-    sim = init_sim("test_add_np")
+def test_add_np(enable_trace=False):
+    sim, sim_trace = init_sim("test_add_np")
     for _ in range(3):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     actual = unpack('<i', pack('<I', sim.inspect_mem(rf)[2]))[0]
     assert_equals(-110, actual, "[test_add_np] $v0 == -110")
 
-def test_add_pn():
-    sim = init_sim("test_add_pn")
+def test_add_pn(enable_trace=False):
+    sim, sim_trace = init_sim("test_add_pn")
     for _ in range(3):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(110, sim.inspect_mem(rf)[2], "[test_add_pn] $v0 == 110")
 
-def test_addi_pp():
-    sim = init_sim("test_addi_pp")
+def test_addi_pp(enable_trace=False):
+    sim, sim_trace = init_sim("test_addi_pp")
     sim.step({})
     sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(32, sim.inspect_mem(rf)[2], "[test_addi_pp] $v0 == 32")
 
-def test_addi_same():
-    sim = init_sim("test_addi_same")
+def test_addi_same(enable_trace=False):
+    sim, sim_trace = init_sim("test_addi_same")
     sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(0, sim.inspect_mem(rf)[2], "[test_addi_same] $v0 == 0")
 
-def test_addi_nn():
-    sim = init_sim("test_addi_nn")
+def test_addi_nn(enable_trace=False):
+    sim, sim_trace = init_sim("test_addi_nn")
     for _ in range(3):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     actual = unpack('<i', pack('<I', sim.inspect_mem(rf)[2]))[0]
     assert_equals(-32, actual, "[test_addi_nn] $v0 == -32")
 
-def test_addi_np():
-    sim = init_sim("test_addi_np")
+def test_addi_np(enable_trace=False):
+    sim, sim_trace = init_sim("test_addi_np")
     for _ in range(3):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(2, sim.inspect_mem(rf)[2], "[test_addi_np] $v0 == 2")
 
-def test_addi_pn():
-    sim = init_sim("test_addi_pn")
+def test_addi_pn(enable_trace=False):
+    sim, sim_trace = init_sim("test_addi_pn")
     sim.step({})
     sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     actual = unpack('<i', pack('<I', sim.inspect_mem(rf)[2]))[0]
     assert_equals(-2, actual, "[test_addi_pn] $v0 == -2")
 
-def test_slt_pp_1():
-    sim = init_sim("test_slt_pp_1")
+def test_slt_pp_1(enable_trace=False):
+    sim, sim_trace = init_sim("test_slt_pp_1")
     for _ in range(3):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(1, sim.inspect_mem(rf)[4], "[test_slt_pp_1] (254 < 10419) == 1")
 
-def test_slt_pp_2():
-    sim = init_sim("test_slt_pp_2")
+def test_slt_pp_2(enable_trace=False):
+    sim, sim_trace = init_sim("test_slt_pp_2")
     for _ in range(3):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(0, sim.inspect_mem(rf)[4], "[test_slt_pp_2] (10419 < 254) == 0")
 
-def test_slt_same():
-    sim = init_sim("test_slt_same")
+def test_slt_same(enable_trace=False):
+    sim, sim_trace = init_sim("test_slt_same")
     for _ in range(3):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(0, sim.inspect_mem(rf)[5], "[test_slt_same] (0 < 0) == 0")
 
-def test_slt_nn_1():
-    sim = init_sim("test_slt_nn_1")
+def test_slt_nn_1(enable_trace=False):
+    sim, sim_trace = init_sim("test_slt_nn_1")
     for _ in range(5):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(0, sim.inspect_mem(rf)[2], "[test_slt_nn_1] (-1 < -2) == 0")
 
 
-def test_slt_nn_2():
-    sim = init_sim("test_slt_nn_2")
+def test_slt_nn_2(enable_trace=False):
+    sim, sim_trace = init_sim("test_slt_nn_2")
     for _ in range(5):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(1, sim.inspect_mem(rf)[2], "[test_slt_nn_2] (-2 < -1) == 1")
 
-def test_slt_np():
-    sim = init_sim("test_slt_np")
+def test_slt_np(enable_trace=False):
+    sim, sim_trace = init_sim("test_slt_np")
     for _ in range(4):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(1, sim.inspect_mem(rf)[15], "[test_slt_np] (-10419 < 10419) == 1")
 
-def test_slt_pn():
-    sim = init_sim("test_slt_pn")
+def test_slt_pn(enable_trace=False):
+    sim, sim_trace = init_sim("test_slt_pn")
     for _ in range(4):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(0, sim.inspect_mem(rf)[15], "[test_slt_pn] (10419 < -10419) == 0")
 
-def test_sw():
-    sim = init_sim("test_sw")
+def test_sw(enable_trace=False):
+    sim, sim_trace = init_sim("test_sw")
     for _ in range(3):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(9, sim.inspect_mem(d_mem)[0x68], "[test_sw] *(0x68) == 9")
 
-def test_sw_offset_n():
-    sim = init_sim("test_sw_offset_n")
+def test_sw_offset_n(enable_trace=False):
+    sim, sim_trace = init_sim("test_sw_offset_n")
     for _ in range(3):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     actual = unpack('<i', pack('<I', sim.inspect_mem(d_mem)[0x66]))[0]
     assert_equals(-9, actual, "[test_sw_offset_n] *(0x66) == -9")
 
-def test_sw_offset_p():
-    sim = init_sim("test_sw_offset_p")
+def test_sw_offset_p(enable_trace=False):
+    sim, sim_trace = init_sim("test_sw_offset_p")
     for _ in range(3):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(9, sim.inspect_mem(d_mem)[0x6A], "[test_sw_offset_p] *(0x6A) == 9")
 
-def test_lw():
-    sim = init_sim("test_lw")
+def test_lw(enable_trace=False):
+    sim, sim_trace = init_sim("test_lw")
     for _ in range(4):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(17, sim.inspect_mem(rf)[2], "[test_lw] $v0 == 17")
 
-def test_lw_offset_n():
-    sim = init_sim("test_lw_offset_n")
+def test_lw_offset_n(enable_trace=False):
+    sim, sim_trace = init_sim("test_lw_offset_n")
     for _ in range(5):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     actual = unpack('<i', pack('<I', sim.inspect_mem(rf)[2]))[0]
     assert_equals(-17, actual, "[test_lw_offset_n] $v0 == -17")
 
-def test_lw_offset_p():
-    sim = init_sim("test_lw_offset_p")
+def test_lw_offset_p(enable_trace=False):
+    sim, sim_trace = init_sim("test_lw_offset_p")
     for _ in range(5):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(17, sim.inspect_mem(rf)[2], "[test_lw_offset_p] $v0 == 17")
 
-def test_and():
-    sim = init_sim("test_and")
+def test_and(enable_trace=False):
+    sim, sim_trace = init_sim("test_and")
     for _ in range(3):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     actual = unpack('<i', pack('<I', sim.inspect_mem(rf)[2]))[0]
     assert_equals(5, actual, "[test_and_ones] $v0 == 5")
 
-def test_and_zeroes():
-    sim = init_sim("test_and_zeroes")
+def test_and_zeroes(enable_trace=False):
+    sim, sim_trace = init_sim("test_and_zeroes")
     for _ in range(3):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(0, sim.inspect_mem(rf)[2], "[test_and_zeroes] $v0 == 0")
 
-def test_and_ones():
-    sim = init_sim("test_and_ones")
+def test_and_ones(enable_trace=False):
+    sim, sim_trace = init_sim("test_and_ones")
     for _ in range(3):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     actual = unpack('<i', pack('<I', sim.inspect_mem(rf)[2]))[0]
     assert_equals(-214, actual, "[test_and_ones] $v0 == -214")
 
-def test_beq_backward_eq():
-    sim = init_sim("test_beq_backward_eq")
+def test_beq_backward_eq(enable_trace=False):
+    sim, sim_trace = init_sim("test_beq_backward_eq")
     for _ in range(10):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(104, sim.inspect_mem(rf)[4], "[test_beq_backward_eq] $a0 == 104")
 
-def test_beq_backward_neq():
-    sim = init_sim("test_beq_backward_neq")
+def test_beq_backward_neq(enable_trace=False):
+    sim, sim_trace = init_sim("test_beq_backward_neq")
     for _ in range(10):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(214, sim.inspect_mem(rf)[4], "[test_beq_forward_neq] $a0 == 214")
 
-def test_beq_forward_eq():
-    sim = init_sim("test_beq_forward_eq")
+def test_beq_forward_eq(enable_trace=False):
+    sim, sim_trace = init_sim("test_beq_forward_eq")
     for _ in range(10):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(1, sim.inspect_mem(rf)[4], "[test_beq_forward_eq] $a0 == 1")
     assert_equals(2, sim.inspect_mem(rf)[5], "[test_beq_forward_eq] $a1 == 2")
 
-def test_beq_forward_neq():
-    sim = init_sim("test_beq_forward_neq")
+def test_beq_forward_neq(enable_trace=False):
+    sim, sim_trace = init_sim("test_beq_forward_neq")
     for _ in range(10):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(2, sim.inspect_mem(rf)[4], "[test_beq_forward_neq] $a0 == 2")
     assert_equals(2, sim.inspect_mem(rf)[5], "[test_beq_forward_neq] $a1 == 2")
 
-def test_zero_lui():
-    sim = init_sim("test_zero_lui")
+def test_zero_lui(enable_trace=False):
+    sim, sim_trace = init_sim("test_zero_lui")
     sim.step({})
     sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(0, sim.inspect_mem(rf)[2], "[test_zero_lui] $v0 == 0")
 
-def test_zero_ori():
-    sim = init_sim("test_zero_ori")
+def test_zero_ori(enable_trace=False):
+    sim, sim_trace = init_sim("test_zero_ori")
     sim.step({})
     sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(0, sim.inspect_mem(rf)[2], "[test_zero_ori] $v0 == 0")
 
-def test_zero_addi():
-    sim = init_sim("test_zero_addi")
+def test_zero_addi(enable_trace=False):
+    sim, sim_trace = init_sim("test_zero_addi")
     sim.step({})
     sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(0, sim.inspect_mem(rf)[2], "[test_zero_addi] $v0 == 0")
 
-def test_zero_add():
-    sim = init_sim("test_zero_add")
+def test_zero_add(enable_trace=False):
+    sim, sim_trace = init_sim("test_zero_add")
     for _ in range(3):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(0, sim.inspect_mem(rf)[2], "[test_zero_add] $v0 == 0")
 
-def test_zero_and():
-    sim = init_sim("test_zero_and")
+def test_zero_and(enable_trace=False):
+    sim, sim_trace = init_sim("test_zero_and")
     for _ in range(3):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(0, sim.inspect_mem(rf)[2], "[test_zero_and] $v0 == 0")
 
-def test_zero_slt():
-    sim = init_sim("test_zero_slt")
+def test_zero_slt(enable_trace=False):
+    sim, sim_trace = init_sim("test_zero_slt")
     for _ in range(3):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(0, sim.inspect_mem(rf)[2], "[test_zero_slt] $v0 == 0")
 
-def test_zero_lw():
-    sim = init_sim("test_zero_lw")
+def test_zero_lw(enable_trace=False):
+    sim, sim_trace = init_sim("test_zero_lw")
     for _ in range(4):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(0, sim.inspect_mem(rf)[2], "[test_zero_lw] $v0 == 0")
 
-def test_instructor():
-    sim = init_sim("test_instructor")
+def test_instructor(enable_trace=False):
+    sim, sim_trace = init_sim("test_instructor")
     
     for cycle in range(500):
         sim.step({})
 
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(10, sim.inspect_mem(d_mem)[0], "[test_instructor] *(0x0) == 10")
     assert_equals(10, sim.inspect_mem(rf)[8], "[test_instructor] $t0 == 10")
 
-def test_fibonacci():
-    sim = init_sim("test_fibonacci")
+def test_fibonacci(enable_trace=False):
+    sim, sim_trace = init_sim("test_fibonacci")
     for cycle in range(500):
         sim.step({})
+    if enable_trace:
+        print_trace_result(sim, sim_trace)
     assert_equals(987, sim.inspect_mem(rf)[2], "[test_fibonacci] $v0 == 987")
     assert_equals(0, sim.inspect_mem(rf)[16], "[test_fibonacci] $s0 == 0")
     assert_equals(1, sim.inspect_mem(rf)[17], "[test_fibonacci] $s1 == 1")
@@ -324,6 +423,7 @@ def test_fibonacci():
     assert_equals(10419, sim.inspect_mem(rf)[10], "[test_fibonacci] $t2 == 10419")
 
 if __name__ == "__main__":
+    # Pass in True for any test function to enable trace
     start_test_group("LOAD_IMMEDIATE_VALUE")
     test_lui()
     test_ori()
